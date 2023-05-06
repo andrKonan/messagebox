@@ -1,0 +1,121 @@
+* {
+	font-family: 'Noto Sans';
+	color: #F1FFE7;
+}
+
+input {
+	background-color: #242B2F;
+	border-radius: 2px;
+	border: 1px solid #C2E7DA;
+	display: inline-block;
+	font-family: 'Noto Sans';
+	text-decoration: none;
+}
+
+input:hover {
+	background-color: #242B2F;
+	border-radius: 2px;
+	border: 1px solid #F1FFE7;
+}
+
+input::placeholder {
+	color: #C3D9B4;
+}
+
+html, body {
+	display: flex;
+	flex-direction: row;
+	margin: 0px;
+	height: 100%;
+	width: 100%;
+}
+
+#menu, #nav {
+	width: 10%;
+	padding: 5px;
+	background-color: #242B2F;
+}
+
+#chat {
+	background-color: #30393E;
+}
+
+.nav_chat_item {
+	margin-bottom: 5px;
+}
+
+.nav_chat_item > input {
+	width: 100%;
+}
+
+.add_button {
+	display: flex;
+	justify-content: space-between;
+}
+
+.add_button input:first-child {
+	min-width: 80%;
+	margin-right: 5px;
+}
+
+#chat {
+	width: 80%;
+	padding: 5px;
+}
+
+.header {
+	text-align: center;
+	font-size: 120%;
+	margin-bottom: 10px;
+}
+
+#chat > #messages, #menu > #members, #nav > #chats {
+	height: 94%;
+	display: flex;
+	flex-direction: column;
+}
+
+.message_date {
+	color: #C3D9B4;
+}
+
+.message_author {
+	font-style: italic;
+}
+
+.message, .member {
+	margin-bottom: 5px;
+}
+
+.delete_button {
+	display: inline-block;
+	float: right;
+}
+
+#input_box {
+	min-width: 92%;
+}
+
+#login {
+	display: flex;
+	width: 100%;
+}
+
+#login > form {
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+}
+
+#login > form > input {
+	margin-bottom: 10px;
+}
+
+#logout > form {
+	display: flex;
+	justify-content: space-between;
+}
+
+.member_admin {
+	font-weight: bold;
+}
