@@ -29,14 +29,14 @@
 					echo "<div id='messages'>";
 						echo "<div class='header'>".get_chat_name($c, $_GET["chat"])."</div>";
 						foreach ($messages as $message) {
-							echo "<div class='message'><span class='message_date'>".$message[2]."</span> <span class='message_author'>[".get_user_name($c, $message[3])."]</span> <span class='message_text'>".htmlspecialchars($message[1])."</span>";
+							echo "<div class='message'><div class='message_text'><span class='message_author'>".get_user_name($c, $message[3])."</span><br><span class='message_text'>".htmlspecialchars($message[1])."</span> <span class='message_date'>".$message[2]."</span></div>";
 							if ($message[3] == $user["id"] || is_user_chat_admin($c, $user["id"], $_GET["chat"])) {
 								echo "<form class='delete_button' action='delete_message.php'><input type='hidden' name='chat' value=".$_GET["chat"]."><input type='hidden' name='message' value='".$message[0]."'><input type='submit' value='x'></form>";
 							}
 							echo "</div>";
 						}
 					echo "</div><hr>";
-					echo "<form id='input_send' action='send_message.php' method='get'><input type='hidden' name='chat' value=".$_GET["chat"]."> <input type='text' maxlenght='1024' name='message' id='input_box' placeholder='Send message'> <input type='submit' value='Send message'></form>";
+					echo "<form id='input_send' action='send_message.php' method='get'><input type='hidden' name='chat' value=".$_GET["chat"]."> <input type='text' maxlenght='1024' name='message' id='input_box' placeholder='Input message'> <input type='submit' value='Send message'></form>";
 				}
 			echo "</div>";
 			echo "<div id='menu'>";
@@ -46,7 +46,7 @@
 					echo "<div class='header'>Members</div>";
 						foreach ($members as $member) {
 							if ($member[2]) {$is_admin = "member_admin";} else {$is_admin = "member_user";}
-							echo "<div class='member ".$is_admin."'>".$member[1];
+							echo "<div class='member ".$is_admin."'><div class='member_name'>".$member[1]."</div>";
 							if ($member[0] == $user["id"] || is_user_chat_admin($c, $user["id"], $_GET["chat"])) {
 								echo "<form class='delete_button' action='remove_member.php'><input type='hidden' name='user' value=".$member[0]."><input type='hidden' name='chat' value='".$_GET["chat"]."'><input type='submit' value='x'></form>";
 							}

@@ -1,25 +1,37 @@
+:root {
+  --main-bg-color: #212326;
+  --secondary-bg-color: #27292d;
+  --main-fg-color: #d9dfec;
+  --secondary-fg-color: #a1a4aa;
+}
+
+
 * {
 	font-family: 'Noto Sans';
-	color: #F1FFE7;
+	color: var(--main-fg-color);
 }
 
 input {
-	background-color: #242B2F;
-	border-radius: 2px;
-	border: 1px solid #C2E7DA;
+	background-color: rgba(0, 0, 0, 0);
+	border-radius: 8px;
+	padding: 4px;
+	cursor: pointer;
+	border: 2px solid var(--main-bg-color);
 	display: inline-block;
 	font-family: 'Noto Sans';
+	font-size: 16px;
 	text-decoration: none;
+	
+	transition: all 0.5s;
 }
 
 input:hover {
-	background-color: #242B2F;
-	border-radius: 2px;
-	border: 1px solid #F1FFE7;
+	border-radius: 8px;
+	border: 2px solid var(--secondary-fg-color);
 }
 
 input::placeholder {
-	color: #C3D9B4;
+	color: var(--main-fg-color);
 }
 
 html, body {
@@ -30,14 +42,17 @@ html, body {
 	width: 100%;
 }
 
+#menu, #nav, #chat {
+	padding: 15px;
+}
+
 #menu, #nav {
 	width: 10%;
-	padding: 5px;
-	background-color: #242B2F;
+	background-color: var(--main-bg-color);
 }
 
 #chat {
-	background-color: #30393E;
+	background-color: var(--secondary-bg-color);
 }
 
 .nav_chat_item {
@@ -60,7 +75,6 @@ html, body {
 
 #chat {
 	width: 80%;
-	padding: 5px;
 }
 
 .header {
@@ -75,8 +89,19 @@ html, body {
 	flex-direction: column;
 }
 
+.message {
+	background-color: var(--main-bg-color);
+	border-radius: 8px;
+	padding: 4px 8px;
+	
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
 .message_date {
-	color: #C3D9B4;
+	color: var(--secondary-fg-color);
 }
 
 .message_author {
@@ -84,7 +109,7 @@ html, body {
 }
 
 .message, .member {
-	margin-bottom: 5px;
+	margin-bottom: 6px;
 }
 
 .delete_button {
@@ -93,10 +118,16 @@ html, body {
 }
 
 #input_box {
-	min-width: 92%;
+	min-width: 90%;
+}
+
+#input_send {
+	display: flex;
+	justify-content: space-around;
 }
 
 #login {
+	background-color: var(--main-bg-color);
 	display: flex;
 	width: 100%;
 }
@@ -114,6 +145,13 @@ html, body {
 #logout > form {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
+}
+
+.member {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .member_admin {
