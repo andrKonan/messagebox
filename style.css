@@ -89,6 +89,19 @@ html, body {
 	flex-direction: column;
 }
 
+.message_date_delimiter {
+	display: flex;
+	align-item: center;
+	justify-content: center;
+	padding-bottom: 8px;
+}
+
+.message_date_delimiter > hr {
+	width: 40%;
+	height: 0px;
+	border-top: 1px solid var(--main-fg-color);
+}
+
 .message {
 	background-color: var(--main-bg-color);
 	border-radius: 8px;
@@ -100,12 +113,13 @@ html, body {
 	align-items: center;
 }
 
-.message_date {
+.message_date, .message_author {
 	color: var(--secondary-fg-color);
+	font-style: italic;
 }
 
 .message_author {
-	font-style: italic;
+	font-weight: bold;
 }
 
 .message, .member {
