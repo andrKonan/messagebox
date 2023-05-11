@@ -9,7 +9,7 @@
 <body>
 	<?php
 		require "util.php";
-		$c = mysqli_connect("localhost", "root", "root", "message_box");
+		$c = get_database();
 		if (authenticate_user($c)) {
 			$user = get_user_by_name($c, $_COOKIE["username"]);
 			echo "<div id='nav'>";
@@ -25,23 +25,58 @@
 			echo "</div>";
 			echo "<div id='chat'>";
 				if (isset($_GET["chat"])) {
-					$messages = get_chat_messages($c, $_GET["chat"]);
-					$previous_datetime = "1970-01-01 01:00:00";
 					echo "<div id='messages'>";
 						echo "<div class='header'>".get_chat_name($c, $_GET["chat"])."</div>";
-						foreach ($messages as $message) {
-							$message_post_datetime = new DateTimeImmutable($message[2]); $message_post_date = $message_post_datetime->format("Y-m-d"); $message_post_time = $message_post_datetime->format("H:i");
-							if (strcmp(date('Y-m-d', strtotime($message_post_date)), date('Y-m-d', strtotime($previous_datetime))) != 0) {
-								echo "<div class='message_date_delimiter'><hr><span>".date('Y-m-d', strtotime($message_post_date))."</span><hr></div>";
-								$previous_datetime = $message_post_date;
-							}
-							echo "<div class='message'><div class='message_text'><span class='message_date'>".$message_post_time."</span> <span class='message_author'>".get_user_name($c, $message[3])."</span><br><span class='message_text'>".htmlspecialchars($message[1])."</span></div>";
-							if ($message[3] == $user["id"] || is_user_chat_admin($c, $user["id"], $_GET["chat"])) {
-								echo "<form class='delete_button' action='delete_message.php'><input type='hidden' name='chat' value=".$_GET["chat"]."><input type='hidden' name='message' value='".$message[0]."'><input type='submit' value='x'></form>";
-							}
-							echo "</div>";
-						}
-					echo "</div><hr>";
+						echo '<script async>
+var last_message_id=0, prev_post_date=new Date("1970-01-01 01:00:00"), is_admin='.is_user_chat_admin($c, $user["id"], $_GET["chat"]).', self_id='.$user["id"].', chat_id='.$_GET["chat"].';
+
+function add_message(messagesDiv, message_id, author, author_id, text, post_date) {
+	post_date = new Date(post_date);
+	if (post_date.getDate() != prev_post_date.getDate() || post_date.getMonth() != prev_post_date.getMonth() || post_date.getFullYear() != prev_post_date.getFullYear()) {
+		date_delimiter = document.createElement("div"); date_delimiter.classList.add("message_date_delimiter"); date_delimiter.innerHTML = "<hr><span>"+(post_date.getDate())+" "+(post_date.toLocaleString("default", {month: "long"}))+" "+(post_date.getFullYear())+"</span><hr>";
+		messagesDiv.append(date_delimiter);
+	}
+	prev_post_date = post_date;
+
+	messageDiv = document.createElement("div"); messageDiv.classList.add("message"); messageTextDiv = document.createElement("div"); messageTextDiv.classList.add("message_text");
+	messageDateSpan = document.createElement("span"); messageDateSpan.classList.add("message_date"); messageDateSpan.innerText = post_date.getHours()+":"+post_date.getMinutes()+":"+post_date.getSeconds(); messageTextDiv.append(messageDateSpan); messageTextDiv.insertAdjacentText("beforeend", " ");
+	messageAuthorSpan = document.createElement("span"); messageAuthorSpan.classList.add("message_author"); messageAuthorSpan.innerText = author; messageTextDiv.append(messageAuthorSpan); messageTextDiv.insertAdjacentHTML("beforeend", "<br>");
+	messageTextSpan = document.createElement("span"); messageTextSpan.classList.add("message_text"); messageTextSpan.innerText = text; messageTextDiv.append(messageTextSpan);
+	messageDiv.append(messageTextDiv); 
+
+	if (author_id == self_id || is_admin) {
+		messageDeleteForm = document.createElement("form"); messageDeleteForm.classList.add("delete_button"); messageDeleteForm.action="delete_message.php";
+		inputChatIdHidden = document.createElement("input"); inputChatIdHidden.type="hidden"; inputChatIdHidden.name="chat"; inputChatIdHidden.value=chat_id; messageDeleteForm.append(inputChatIdHidden);
+		inputMessageIdHidden = document.createElement("input"); inputMessageIdHidden.type="hidden"; inputMessageIdHidden.name="message"; inputMessageIdHidden.value=message_id; messageDeleteForm.append(inputMessageIdHidden);
+		inputSubmit = document.createElement("input"); inputSubmit.type="submit"; inputSubmit.value="x"; messageDeleteForm.append(inputSubmit);
+		messageDiv.append(messageDeleteForm);
+	}
+
+	messagesDiv.append(messageDiv);
+}
+
+function load_chat() {
+	const httpRequest = new XMLHttpRequest();
+
+	console.log("chat");
+	
+	httpRequest.open("POST", "/load_messages.php?chat='.$_GET["chat"].'&last_message_id="+last_message_id, true);
+	httpRequest.send();
+	
+	httpRequest.onreadystatechange = () => {
+		if (httpRequest.readyState === XMLHttpRequest.DONE && httpRequest.status === 200) {
+			messagesDiv = document.getElementById("messages");
+			messagesJson = JSON.parse(httpRequest.response);
+			
+			messagesJson.forEach(elem => add_message(messagesDiv, elem["message_id"], elem["author_name"], elem["user_id"], elem["text"], elem["post_date"]));
+			if (messagesJson.lenght > 0) last_message_id = messagesJson[messagesJson.lenght-1]["message_id"];
+		};
+	};
+}
+
+load_chat();
+</script>';
+					echo "</div>";
 					echo "<form id='input_send' action='send_message.php' method='get'><input type='hidden' name='chat' value=".$_GET["chat"]."> <input type='text' maxlenght='1024' name='message' id='input_box' placeholder='Input message'> <input type='submit' value='Send message'></form>";
 				}
 			echo "</div>";

@@ -98,8 +98,11 @@ html, body {
 
 .message_date_delimiter > hr {
 	width: 40%;
+}
+
+hr {
 	height: 0px;
-	border-top: 1px solid var(--main-fg-color);
+	border-top: 1px solid var(--secondary-fg-color);
 }
 
 .message {
@@ -113,13 +116,14 @@ html, body {
 	align-items: center;
 }
 
-.message_date, .message_author {
+.message_date {
 	color: var(--secondary-fg-color);
 	font-style: italic;
+	font-size: 80%;
 }
 
 .message_author {
-	font-weight: bold;
+	color: var(--secondary-fg-color);
 }
 
 .message, .member {
@@ -170,4 +174,10 @@ html, body {
 
 .member_admin {
 	font-weight: bold;
+}
+
+iframe {
+	width: 100%;
+	height: 100%;
+	border: 0px solid black;
 }
