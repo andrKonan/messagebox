@@ -17,11 +17,11 @@
 // }
 // echo "</div><hr>";
 
-if (isset($_GET["chat"])) {
+if (isset($_GET["chat"]) && isset($_GET["last_message_id"])) {
 	require "util.php";
 	$c = get_database();
 	if (authenticate_user($c)) {
-		$messages = get_chat_messages($c, $_GET["chat"]);
+		$messages = get_chat_messages($c, $_GET["chat"], $_GET["last_message_id"]);
 		header('Content-Type: application/json');
 		echo json_encode($messages);
 	}

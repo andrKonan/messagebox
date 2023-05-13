@@ -49,8 +49,8 @@ function get_chat_name($c, $chat_id) {
 	return mysqli_get($c, "SELECT name FROM chat WHERE id = ?", "s", $chat_id)->fetch_assoc()["name"];
 }
 
-function get_chat_messages($c, $chat_id) {
-	return mysqli_get($c, "SELECT message.id AS message_id, text, post_date, user_id, chat_id, user.name AS author_name FROM message JOIN user ON user.id=message.user_id WHERE message.chat_id=? LIMIT 25", "i", $chat_id)->fetch_all(MYSQLI_ASSOC);
+function get_chat_messages($c, $chat_id, $last_message_id) {
+	return mysqli_get($c, "SELECT message.id AS message_id, text, post_date, user_id, chat_id, user.name AS author_name FROM message JOIN user ON user.id=message.user_id WHERE message.chat_id=? AND message.id>? ORDER BY message.id DESC LIMIT 25", "ii", $chat_id, $last_message_id)->fetch_all(MYSQLI_ASSOC);
 }
 
 function get_chat_members($c, $chat_id) {

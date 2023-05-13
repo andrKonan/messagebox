@@ -28,18 +28,20 @@
 					echo "<div id='messages'>";
 						echo "<div class='header'>".get_chat_name($c, $_GET["chat"])."</div>";
 						echo '<script async>
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 var last_message_id=0, prev_post_date=new Date("1970-01-01 01:00:00"), is_admin='.is_user_chat_admin($c, $user["id"], $_GET["chat"]).', self_id='.$user["id"].', chat_id='.$_GET["chat"].';
 
 function add_message(messagesDiv, message_id, author, author_id, text, post_date) {
 	post_date = new Date(post_date);
 	if (post_date.getDate() != prev_post_date.getDate() || post_date.getMonth() != prev_post_date.getMonth() || post_date.getFullYear() != prev_post_date.getFullYear()) {
-		date_delimiter = document.createElement("div"); date_delimiter.classList.add("message_date_delimiter"); date_delimiter.innerHTML = "<hr><span>"+(post_date.getDate())+" "+(post_date.toLocaleString("default", {month: "long"}))+" "+(post_date.getFullYear())+"</span><hr>";
+		date_delimiter = document.createElement("div"); date_delimiter.classList.add("message_date_delimiter"); date_delimiter.innerHTML = "<hr><span>"+(post_date.toLocaleString("default", {day: "numeric", month: "short", year: "numeric"}))+"</span><hr>";
 		messagesDiv.append(date_delimiter);
 	}
 	prev_post_date = post_date;
 
 	messageDiv = document.createElement("div"); messageDiv.classList.add("message"); messageTextDiv = document.createElement("div"); messageTextDiv.classList.add("message_text");
-	messageDateSpan = document.createElement("span"); messageDateSpan.classList.add("message_date"); messageDateSpan.innerText = post_date.getHours()+":"+post_date.getMinutes()+":"+post_date.getSeconds(); messageTextDiv.append(messageDateSpan); messageTextDiv.insertAdjacentText("beforeend", " ");
+	messageDateSpan = document.createElement("span"); messageDateSpan.classList.add("message_date"); messageDateSpan.innerText = post_date.toLocaleString("default", {hour: "numeric", minute: "numeric", second: "numeric"}); messageTextDiv.append(messageDateSpan); messageTextDiv.insertAdjacentText("beforeend", " ");
 	messageAuthorSpan = document.createElement("span"); messageAuthorSpan.classList.add("message_author"); messageAuthorSpan.innerText = author; messageTextDiv.append(messageAuthorSpan); messageTextDiv.insertAdjacentHTML("beforeend", "<br>");
 	messageTextSpan = document.createElement("span"); messageTextSpan.classList.add("message_text"); messageTextSpan.innerText = text; messageTextDiv.append(messageTextSpan);
 	messageDiv.append(messageTextDiv); 
@@ -57,24 +59,29 @@ function add_message(messagesDiv, message_id, author, author_id, text, post_date
 
 function load_chat() {
 	const httpRequest = new XMLHttpRequest();
-
-	console.log("chat");
-	
-	httpRequest.open("POST", "/load_messages.php?chat='.$_GET["chat"].'&last_message_id="+last_message_id, true);
-	httpRequest.send();
 	
 	httpRequest.onreadystatechange = () => {
 		if (httpRequest.readyState === XMLHttpRequest.DONE && httpRequest.status === 200) {
 			messagesDiv = document.getElementById("messages");
-			messagesJson = JSON.parse(httpRequest.response);
+			messagesJson = JSON.parse(httpRequest.response); messagesJson.reverse();
 			
 			messagesJson.forEach(elem => add_message(messagesDiv, elem["message_id"], elem["author_name"], elem["user_id"], elem["text"], elem["post_date"]));
-			if (messagesJson.lenght > 0) last_message_id = messagesJson[messagesJson.lenght-1]["message_id"];
+			if (messagesJson.length > 0) {
+				last_message_id = messagesJson[messagesJson.length-1]["message_id"];
+			};
+
 		};
 	};
-}
 
-load_chat();
+	httpRequest.open("POST", "/load_messages.php?chat='.$_GET["chat"].'&last_message_id="+last_message_id, false);
+	httpRequest.send();
+}
+(async()=>{
+	while (true) {
+		load_chat();
+		await delay(1000);
+	}
+})();
 </script>';
 					echo "</div>";
 					echo "<form id='input_send' action='send_message.php' method='get'><input type='hidden' name='chat' value=".$_GET["chat"]."> <input type='text' maxlenght='1024' name='message' id='input_box' placeholder='Input message'> <input type='submit' value='Send message'></form>";
